@@ -35,6 +35,24 @@ class transferfileClient
         {
         }        
     }
+
+    void GetIndex() throws Exception
+    {       
+        System.out.println("File list from server:");
+        while (true)
+        {
+            String line = din.readUTF();
+            if (line.equals("over")){
+                break;
+            }
+                
+            System.out.println("  " + line);
+    
+        }
+    }
+    
+
+
     void SendFile() throws Exception
     {        
         
@@ -136,18 +154,28 @@ class transferfileClient
         while(true)
         {    
             System.out.println("[ MENU ]");
-            System.out.println("1. Send File");
-            System.out.println("2. Receive File");
-            System.out.println("3. Exit");
+
+            System.out.println("1. File List");
+            System.out.println("2. Send File");
+            System.out.println("3. Receive File");
+            System.out.println("4. Exit");
             System.out.print("\nEnter Choice :");
             int choice;
             choice=Integer.parseInt(br.readLine());
-            if(choice==1)
+            if(choice == 1)
             {
+                dout.writeUTF("LIST");
+                GetIndex();
+            }
+
+            else if(choice == 2)
+            { 
                 dout.writeUTF("SEND");
                 SendFile();
             }
-            else if(choice==2)
+
+
+            else if(choice==3)
             {
                 dout.writeUTF("GET");
                 ReceiveFile();
