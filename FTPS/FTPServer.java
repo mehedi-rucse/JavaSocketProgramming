@@ -3,7 +3,6 @@ package FTPS;
 
 import java.net.*;
 import java.io.*;
-//import java.util.*;
 
 public class FTPServer
 {
@@ -27,6 +26,9 @@ class transferfile extends Thread
 {
     Socket ClientSoc;
 
+   
+    
+
     DataInputStream din;
     DataOutputStream dout;
     
@@ -47,6 +49,42 @@ class transferfile extends Thread
         }  
               
     }
+
+    void SendIndex() throws Exception 
+    {
+            // Create a file object 
+            File f = new File("E:/Computer Networks/JavaSocketProgramming/FTPS"); 
+  
+            // Create a FileFilter 
+            FileFilter filter = new FileFilter() { 
+  
+                public boolean accept(File f) 
+                { 
+                    return f.getName().endsWith("txt"); 
+                } 
+            }; 
+  
+            // Get all the names of the files present 
+            // in the given directory 
+            // which are text files 
+            File[] files = f.listFiles(filter); 
+  
+            // Display the names of the files 
+            for (int i = 0; i < files.length; i++)
+            { 
+                dout.writeUTF(files[i].getName());  
+               
+            }
+            dout.writeUTF("over");
+            return;
+
+                
+        
+     }
+
+
+
+
     void SendFile() throws Exception
     {        
         String filename=din.readUTF();
@@ -135,6 +173,15 @@ class transferfile extends Thread
                 SendFile();
                 continue;
             }
+
+            else if(Command.compareTo("LIST")==0)
+            {
+                System.out.println("\tLIST Command Receiced ...");                
+                SendIndex();
+                continue;
+            }
+
+
             else if(Command.compareTo("SEND")==0)
             {
                 System.out.println("\tSEND Command Receiced ...");                
