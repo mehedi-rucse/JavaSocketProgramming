@@ -1,6 +1,16 @@
 
 package FTPS;
 
+/**
+ * This program is a very simple network file server.The 
+ * server has a list of available text files.
+ * The Client can:
+ * 1: see the list of files,
+ * 2: download any text files available in the server,
+ * 3: and also can send some text files,
+ */
+
+ 
 import java.net.*;
 import java.io.*;
 
@@ -8,26 +18,19 @@ public class FTPServer
 {
     public static void main(String args[]) throws Exception
     {
-        ServerSocket soc=new ServerSocket(5217);
-        System.out.println("FTP Server Started on Port Number 5217");
+        ServerSocket soc=new ServerSocket(3000);
+        System.out.println("FTP Server Started on Port Number 3000");
         while(true)
         {
             System.out.println("Waiting for Connection ...");
-            new transferfile(soc.accept());
-            
-            
-        }
-        
-        
+            new transferfile(soc.accept());  
+        }  
     }
 }
 
 class transferfile extends Thread
 {
     Socket ClientSoc;
-
-   
-    
 
     DataInputStream din;
     DataOutputStream dout;
@@ -40,33 +43,27 @@ class transferfile extends Thread
             din=new DataInputStream(ClientSoc.getInputStream());
             dout=new DataOutputStream(ClientSoc.getOutputStream());
             System.out.println("FTP Client Connected ...");
-            start();
-            
-            
+            start();   
         }
         catch(Exception ex)
         {
-        }  
-              
+        }           
     }
 
     void SendIndex() throws Exception 
     {
-            // Create a file object 
+            // Create a file object with the location of server 
             File f = new File("E:/Computer Networks/JavaSocketProgramming/FTPS"); 
-  
-            // Create a FileFilter 
-            FileFilter filter = new FileFilter() { 
-  
+
+            FileFilter filter = new FileFilter()
+            { 
                 public boolean accept(File f) 
                 { 
                     return f.getName().endsWith("txt"); 
                 } 
             }; 
   
-            // Get all the names of the files present 
-            // in the given directory 
-            // which are text files 
+            // Get all the names of the text files in the server 
             File[] files = f.listFiles(filter); 
   
             // Display the names of the files 
@@ -77,13 +74,7 @@ class transferfile extends Thread
             }
             dout.writeUTF("over");
             return;
-
-                
-        
      }
-
-
-
 
     void SendFile() throws Exception
     {        
@@ -107,8 +98,7 @@ class transferfile extends Thread
             while(ch!=-1);    
             fin.close();    
             dout.writeUTF("File Receive Successfully");                            
-        }
-        
+        } 
     }
     
     void ReceiveFile() throws Exception
@@ -152,12 +142,8 @@ class transferfile extends Thread
             else
             {
                 return;
-            }
-            
-            
-            
+            }      
     }
-
 
     public void run()
     {
@@ -165,42 +151,39 @@ class transferfile extends Thread
         {
             try
             {
-            System.out.println("Waiting for Command ...");
-            String Command=din.readUTF();
-            if(Command.compareTo("GET")==0)
-            {
-                System.out.println("\tGET Command Received ...");
-                SendFile();
-                continue;
-            }
+                System.out.println("Waiting for Command ...");
+                String Command=din.readUTF();
+                if(Command.compareTo("GET")==0)
+                {
+                    System.out.println("\tGET Command Received ...");
+                    SendFile();
+                    continue;
+                }
 
-            else if(Command.compareTo("LIST")==0)
-            {
-                System.out.println("\tLIST Command Receiced ...");                
-                SendIndex();
-                continue;
-            }
+                else if(Command.compareTo("LIST")==0)
+                {
+                    System.out.println("\tLIST Command Receiced ...");                
+                    SendIndex();
+                    continue;
+                }
 
-
-            else if(Command.compareTo("SEND")==0)
-            {
-                System.out.println("\tSEND Command Receiced ...");                
-                ReceiveFile();
-                continue;
-            }
-            else if(Command.compareTo("DISCONNECT")==0)
-            {
-                System.out.println("\tDisconnect Command Received ...");
-                System.exit(1);
-            }
-            
-            }
-            catch(Exception ex)
-            {
+                else if(Command.compareTo("SEND")==0)
+                {
+                    System.out.println("\tSEND Command Receiced ...");                
+                    ReceiveFile();
+                    continue;
+                }
+                else if(Command.compareTo("DISCONNECT")==0)
+                {
+                    System.out.println("\tDisconnect Command Received ...");
+                    System.exit(1);
+                }
+                
+                }
+                catch(Exception ex)
+                {
             }
             
         }
-    }
-    
-    
+    }  
 }
