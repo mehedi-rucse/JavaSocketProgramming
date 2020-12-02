@@ -1,18 +1,24 @@
 package FTPC;
 
+/**
+ * This program is a very simple network file server.The 
+ * server has a list of available text files.
+ * The Client can:
+ * 1: see the list of files,
+ * 2: download any text files available in the server,
+ * 3: and also can send some text files,
+ */
+
 import java.net.*;
 import java.io.*;
-//import java.util.*;
-
 
 class FTPClient
 {
     public static void main(String args[]) throws Exception
     {
-        Socket soc=new Socket("127.0.0.1",5217);
+        Socket soc=new Socket("127.0.0.1",3000);
         transferfileClient t=new transferfileClient(soc);
-        t.displayMenu();
-        
+        t.displayMenu(); 
     }
 }
 class transferfileClient
@@ -44,18 +50,13 @@ class transferfileClient
             String line = din.readUTF();
             if (line.equals("over")){
                 break;
-            }
-                
+            }  
             System.out.println("  " + line);
-    
         }
     }
     
-
-
     void SendFile() throws Exception
-    {        
-        
+    {         
         String filename;
         System.out.print("Enter File Name :");
         filename=br.readLine();
@@ -97,8 +98,7 @@ class transferfileClient
         }
         while(ch!=-1);
         fin.close();
-        System.out.println(din.readUTF());
-        
+        System.out.println(din.readUTF());   
     }
     
     void ReceiveFile() throws Exception
@@ -142,18 +142,15 @@ class transferfileClient
                 }
             }while(ch!=-1);
             fout.close();
-            System.out.println(din.readUTF());
-                
-        }
-        
-        
+            System.out.println(din.readUTF());    
+        } 
     }
 
     public void displayMenu() throws Exception
     {
         while(true)
         {    
-            System.out.println("[ MENU ]");
+            System.out.println("\n  [ MENU ]");
 
             System.out.println("1. File List");
             System.out.println("2. Send File");
@@ -174,12 +171,12 @@ class transferfileClient
                 SendFile();
             }
 
-
             else if(choice==3)
             {
                 dout.writeUTF("GET");
                 ReceiveFile();
             }
+            
             else
             {
                 dout.writeUTF("DISCONNECT");
